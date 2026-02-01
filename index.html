@@ -3,54 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Aura Control System</title>
-    
+    <title>Aura Control System V6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'aura-black': '#050505',
-                        'aura-cyan': '#00F2FF',
-                        'aura-purple': '#a855f7',
-                        'aura-panel': '#111111',
-                        'aura-log': '#0a0a0a'
-                    },
-                    animation: {
-                        'pulse-text': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { 'aura-black': '#050505', 'aura-cyan': '#00F2FF', 'aura-purple': '#a855f7', 'aura-panel': '#111111', 'aura-log': '#0a0a0a' }, animation: { 'pulse-text': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', } } } }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; overflow-x: hidden; }
-        
         .tab-content { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .tab-content.active { display: block; opacity: 1; }
-
-        /* SWITCH PERSONALIZADO */
         .toggle-checkbox:checked { right: 0; border-color: #00F2FF; }
         .toggle-checkbox:checked + .toggle-label { background-color: #00F2FF; }
         .toggle-checkbox { right: 50%; }
         .toggle-label { width: 3.5rem; height: 1.75rem; }
-
         input[type="time"] { color-scheme: dark; }
         #tsparticles { position: fixed; inset: 0; z-index: -10; }
-        
-        /* MENU LATERAL */
         #sidebar { transition: transform 0.3s ease-in-out; }
         .backdrop { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 
 <body class="bg-aura-black text-white selection:bg-aura-cyan/30">
-
     <div id="tsparticles"></div>
-
     <div id="lock-screen" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center">
         <div class="text-center p-8 w-80 border border-white/10 rounded-2xl bg-aura-panel">
             <h2 class="text-2xl font-bold text-aura-cyan mb-6 tracking-widest">AURA SECURITY</h2>
@@ -62,175 +37,61 @@
 
     <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 z-[60] hidden backdrop opacity-0"></div>
     <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-aura-panel border-r border-white/10 z-[70] transform -translate-x-full flex flex-col p-6 shadow-2xl shadow-aura-cyan/20">
-        <div class="flex items-center gap-2 mb-10">
-            <div class="w-3 h-3 rounded-full bg-aura-cyan shadow-[0_0_10px_#00F2FF]"></div>
-            <span class="font-bold tracking-widest text-xl">MENU</span>
-        </div>
-        
+        <div class="flex items-center gap-2 mb-10"><div class="w-3 h-3 rounded-full bg-aura-cyan shadow-[0_0_10px_#00F2FF]"></div><span class="font-bold tracking-widest text-xl">MENU</span></div>
         <nav class="flex flex-col gap-4">
-            <button onclick="switchTab('juan'); toggleSidebar()" id="link-juan" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-cyan hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">
-                JUAN (Bomba 1)
-                <span class="w-2 h-2 rounded-full bg-aura-cyan opacity-0 group-hover:opacity-100 transition-opacity"></span>
-            </button>
-            <button onclick="switchTab('guille'); toggleSidebar()" id="link-guille" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-purple hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">
-                GUILLE (Bomba 2)
-                <span class="w-2 h-2 rounded-full bg-aura-purple opacity-0 group-hover:opacity-100 transition-opacity"></span>
-            </button>
-            <button onclick="switchTab('logs'); toggleSidebar()" id="link-logs" class="text-left p-4 rounded-xl bg-white/5 hover:bg-white hover:text-black transition-all font-bold border border-white/5">
-                LOGS SISTEMA
-            </button>
+            <button onclick="switchTab('juan'); toggleSidebar()" id="link-juan" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-cyan hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">JUAN (B1)<span class="w-2 h-2 rounded-full bg-aura-cyan opacity-0 group-hover:opacity-100 transition-opacity"></span></button>
+            <button onclick="switchTab('guille'); toggleSidebar()" id="link-guille" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-purple hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">GUILLE (B2)<span class="w-2 h-2 rounded-full bg-aura-purple opacity-0 group-hover:opacity-100 transition-opacity"></span></button>
+            <button onclick="switchTab('logs'); toggleSidebar()" id="link-logs" class="text-left p-4 rounded-xl bg-white/5 hover:bg-white hover:text-black transition-all font-bold border border-white/5">LOGS SISTEMA</button>
         </nav>
-
-        <div class="mt-auto text-xs text-white/20 text-center">
-            Aura Control System v5.2
-        </div>
+        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System v6.0</div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
         <div class="flex items-center gap-4">
-            <button onclick="toggleSidebar()" class="p-2 -ml-2 text-white hover:text-aura-cyan transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-            <div class="flex items-center gap-2">
-                <div id="conn-dot" class="w-2 h-2 rounded-full bg-red-500"></div>
-                <span class="font-bold tracking-widest text-sm">AURA <span class="text-aura-cyan">CONTROL SYSTEM</span></span>
-            </div>
+            <button onclick="toggleSidebar()" class="p-2 -ml-2 text-white hover:text-aura-cyan transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <div class="flex items-center gap-2"><div id="conn-dot" class="w-2 h-2 rounded-full bg-red-500"></div><span class="font-bold tracking-widest text-sm">AURA <span class="text-aura-cyan">CONTROL</span></span></div>
         </div>
         <div class="text-right">
             <p class="text-[10px] text-white/40 uppercase">Hora Sistema</p>
-            <div class="flex items-center justify-end gap-2">
-                <p id="system-time" class="text-sm font-mono text-aura-cyan">--:--:--</p>
-                <button onclick="syncTime()" class="text-[10px] font-bold bg-white/10 px-2 py-1 rounded hover:bg-aura-cyan hover:text-black transition-colors flex items-center gap-1">SYNC</button>
-            </div>
+            <div class="flex items-center justify-end gap-2"><p id="system-time" class="text-sm font-mono text-aura-cyan">--:--:--</p><button onclick="syncTime()" class="text-[10px] font-bold bg-white/10 px-2 py-1 rounded hover:bg-aura-cyan hover:text-black transition-colors flex items-center gap-1">SYNC</button></div>
         </div>
     </nav>
 
     <main class="pt-24 pb-10 px-4 min-h-screen flex flex-col items-center w-full max-w-lg mx-auto">
-        
         <div id="tab-juan" class="tab-content active w-full">
             <div class="p-6 rounded-3xl bg-aura-panel border border-white/10 relative">
-                
-                <div class="flex justify-center mb-6 relative">
-                    <canvas id="clock-b1" width="220" height="220"></canvas>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-xs text-white/30 uppercase">Estado</span>
-                        <span id="txt-status-b1" class="text-xl font-bold text-white">OFF</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div>
-                        <span class="font-bold text-lg text-white block">Bomba 1 (Juan)</span>
-                        <span id="countdown-b1" class="hidden text-sm font-mono text-aura-cyan animate-pulse-text">00:00</span>
-                    </div>
-                    <div class="relative inline-block w-14 align-middle select-none">
-                        <input type="checkbox" id="switch-b1" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-aura-panel appearance-none cursor-pointer" onchange="toggleBomba(1)">
-                        <label for="switch-b1" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
-                    </div>
-                </div>
-
-                <div class="bg-black/30 rounded-2xl p-5 border border-white/5 mb-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs text-aura-cyan uppercase font-bold">Turnos</span>
-                        <div class="flex gap-2">
-                            <button onclick="setSubTab(1, 1)" id="b1-t1-btn" class="w-8 h-8 rounded-full bg-aura-cyan text-black font-bold text-xs shadow-[0_0_10px_rgba(0,242,255,0.5)]">1</button>
-                            <button onclick="setSubTab(1, 2)" id="b1-t2-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">2</button>
-                            <button onclick="setSubTab(1, 3)" id="b1-t3-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">3</button>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 mb-3">
-                        <input type="time" id="start-b1" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-cyan">
-                        <input type="time" id="end-b1" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-cyan">
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="borrarTurno(1)" class="flex-1 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-xs font-bold">BORRAR</button>
-                        <button onclick="programarReloj(1)" class="flex-[2] py-2 bg-white/10 hover:bg-aura-cyan hover:text-black rounded-lg text-xs font-bold">GUARDAR</button>
-                    </div>
-                    <p id="info-b1-active" class="text-xs text-center mt-3 text-white/40 h-4">--</p>
-                </div>
-                 <div class="mt-6">
-                    <div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b1" class="text-aura-cyan font-bold">Off</span></div>
-                    <input type="range" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-cyan" oninput="updateSlider(1, this.value)" onchange="setTimer(1, this.value)">
-                </div>
+                <div class="flex justify-center mb-6 relative"><canvas id="clock-b1" width="220" height="220"></canvas><div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"><span class="text-xs text-white/30 uppercase">Estado</span><span id="txt-status-b1" class="text-xl font-bold text-white">OFF</span></div></div>
+                <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/5"><div><span class="font-bold text-lg text-white block">Bomba 1 (Juan)</span><span id="countdown-b1" class="hidden text-sm font-mono text-aura-cyan animate-pulse-text">00:00</span></div><div class="relative inline-block w-14 align-middle select-none"><input type="checkbox" id="switch-b1" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-aura-panel appearance-none cursor-pointer" onchange="toggleBomba(1)"><label for="switch-b1" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label></div></div>
+                <div class="bg-black/30 rounded-2xl p-5 border border-white/5 mb-4"><div class="flex justify-between items-center mb-4"><span class="text-xs text-aura-cyan uppercase font-bold">Turnos</span><div class="flex gap-2"><button onclick="setSubTab(1, 1)" id="b1-t1-btn" class="w-8 h-8 rounded-full bg-aura-cyan text-black font-bold text-xs shadow-[0_0_10px_rgba(0,242,255,0.5)]">1</button><button onclick="setSubTab(1, 2)" id="b1-t2-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">2</button><button onclick="setSubTab(1, 3)" id="b1-t3-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">3</button></div></div><div class="flex gap-3 mb-3"><input type="time" id="start-b1" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-cyan"><input type="time" id="end-b1" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-cyan"></div><div class="flex gap-2"><button onclick="borrarTurno(1)" class="flex-1 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-xs font-bold">BORRAR</button><button onclick="programarReloj(1)" class="flex-[2] py-2 bg-white/10 hover:bg-aura-cyan hover:text-black rounded-lg text-xs font-bold">GUARDAR</button></div><p id="info-b1-active" class="text-xs text-center mt-3 text-white/40 h-4">--</p></div>
+                <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b1" class="text-aura-cyan font-bold">Off</span></div><input type="range" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-cyan" oninput="updateSlider(1, this.value)" onchange="setTimer(1, this.value)"></div>
             </div>
         </div>
-
         <div id="tab-guille" class="tab-content w-full">
             <div class="p-6 rounded-3xl bg-aura-panel border border-white/10 relative">
-                <div class="flex justify-center mb-6 relative">
-                    <canvas id="clock-b2" width="220" height="220"></canvas>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-xs text-white/30 uppercase">Estado</span>
-                        <span id="txt-status-b2" class="text-xl font-bold text-white">OFF</span>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div>
-                        <span class="font-bold text-lg text-white block">Bomba 2 (Guille)</span>
-                        <span id="countdown-b2" class="hidden text-sm font-mono text-aura-purple animate-pulse-text">00:00</span>
-                    </div>
-                    <div class="relative inline-block w-14 align-middle select-none">
-                        <input type="checkbox" id="switch-b2" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-aura-panel appearance-none cursor-pointer" onchange="toggleBomba(2)">
-                        <label for="switch-b2" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
-                    </div>
-                </div>
-                <div class="bg-black/30 rounded-2xl p-5 border border-white/5 mb-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs text-aura-purple uppercase font-bold">Turnos</span>
-                        <div class="flex gap-2">
-                            <button onclick="setSubTab(2, 1)" id="b2-t1-btn" class="w-8 h-8 rounded-full bg-aura-purple text-black font-bold text-xs shadow-[0_0_10px_rgba(168,85,247,0.5)]">1</button>
-                            <button onclick="setSubTab(2, 2)" id="b2-t2-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">2</button>
-                            <button onclick="setSubTab(2, 3)" id="b2-t3-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">3</button>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 mb-3">
-                        <input type="time" id="start-b2" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-purple">
-                        <input type="time" id="end-b2" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-purple">
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="borrarTurno(2)" class="flex-1 py-2 bg-red-500/10 text-red-500 rounded-lg text-xs font-bold">BORRAR</button>
-                        <button onclick="programarReloj(2)" class="flex-[2] py-2 bg-white/10 hover:bg-aura-purple hover:text-black rounded-lg text-xs font-bold">GUARDAR</button>
-                    </div>
-                    <p id="info-b2-active" class="text-xs text-center mt-3 text-white/40 h-4">--</p>
-                </div>
-                 <div class="mt-6">
-                    <div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b2" class="text-aura-purple font-bold">Off</span></div>
-                    <input type="range" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-purple" oninput="updateSlider(2, this.value)" onchange="setTimer(2, this.value)">
-                </div>
+                <div class="flex justify-center mb-6 relative"><canvas id="clock-b2" width="220" height="220"></canvas><div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"><span class="text-xs text-white/30 uppercase">Estado</span><span id="txt-status-b2" class="text-xl font-bold text-white">OFF</span></div></div>
+                <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/5"><div><span class="font-bold text-lg text-white block">Bomba 2 (Guille)</span><span id="countdown-b2" class="hidden text-sm font-mono text-aura-purple animate-pulse-text">00:00</span></div><div class="relative inline-block w-14 align-middle select-none"><input type="checkbox" id="switch-b2" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-aura-panel appearance-none cursor-pointer" onchange="toggleBomba(2)"><label for="switch-b2" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label></div></div>
+                <div class="bg-black/30 rounded-2xl p-5 border border-white/5 mb-4"><div class="flex justify-between items-center mb-4"><span class="text-xs text-aura-purple uppercase font-bold">Turnos</span><div class="flex gap-2"><button onclick="setSubTab(2, 1)" id="b2-t1-btn" class="w-8 h-8 rounded-full bg-aura-purple text-black font-bold text-xs shadow-[0_0_10px_rgba(168,85,247,0.5)]">1</button><button onclick="setSubTab(2, 2)" id="b2-t2-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">2</button><button onclick="setSubTab(2, 3)" id="b2-t3-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">3</button></div></div><div class="flex gap-3 mb-3"><input type="time" id="start-b2" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-purple"><input type="time" id="end-b2" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-purple"></div><div class="flex gap-2"><button onclick="borrarTurno(2)" class="flex-1 py-2 bg-red-500/10 text-red-500 rounded-lg text-xs font-bold">BORRAR</button><button onclick="programarReloj(2)" class="flex-[2] py-2 bg-white/10 hover:bg-aura-purple hover:text-black rounded-lg text-xs font-bold">GUARDAR</button></div><p id="info-b2-active" class="text-xs text-center mt-3 text-white/40 h-4">--</p></div>
+                <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b2" class="text-aura-purple font-bold">Off</span></div><input type="range" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-purple" oninput="updateSlider(2, this.value)" onchange="setTimer(2, this.value)"></div>
             </div>
         </div>
-
         <div id="tab-logs" class="tab-content w-full">
             <div class="p-6 rounded-3xl bg-aura-panel border border-white/10 relative h-[60vh] flex flex-col">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-white">Registro Eventos</h2>
-                    <button onclick="clearLogs()" class="text-xs text-white/40 hover:text-white">LIMPIAR</button>
-                </div>
-                <div id="log-container" class="flex-1 bg-aura-log border border-white/5 rounded-xl p-4 overflow-y-auto font-mono text-xs text-green-400 space-y-2 shadow-inner">
-                    <div class="text-white/30 italic">Esperando eventos...</div>
-                </div>
+                <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Registro Eventos</h2><button onclick="clearLogs()" class="text-xs text-white/40 hover:text-white">LIMPIAR</button></div>
+                <div id="log-container" class="flex-1 bg-aura-log border border-white/5 rounded-xl p-4 overflow-y-auto font-mono text-xs text-green-400 space-y-2 shadow-inner"><div class="text-white/30 italic">Cargando historial...</div></div>
             </div>
         </div>
-
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
     <script>
         tsParticles.load("tsparticles", { particles: { number: { value: 30 }, color: { value: ["#00F2FF", "#a855f7"] }, opacity: { value: 0.2 }, size: { value: 2 }, move: { enable: true, speed: 0.3 }, links: { enable: true, color: "#ffffff", opacity: 0.05 } } });
-
         const CLAVE = "hola1234"; 
         let currentSubTabB1 = 1, currentSubTabB2 = 1;
         const turnosData = { 1: [null, null, null], 2: [null, null, null] };
-        
-        // VARIABLES PARA COUNTDOWN
-        let timerDurationB1 = 0; // Duración seleccionada en slider (min)
-        let timerDurationB2 = 0;
-        let intervalB1 = null;
-        let intervalB2 = null;
+        let timerDurationB1 = 0; let timerDurationB2 = 0; let intervalB1 = null; let intervalB2 = null;
 
-        // INIT
         window.onload = function() {
-            if(localStorage.getItem('aura_v5_1_auth') === 'ok') document.getElementById('lock-screen').style.display = 'none';
+            if(localStorage.getItem('aura_v6_auth') === 'ok') document.getElementById('lock-screen').style.display = 'none';
             const params = new URLSearchParams(window.location.search);
             const tabParam = params.get('tab');
             if(tabParam && (tabParam === 'juan' || tabParam === 'guille' || tabParam === 'logs')) switchTab(tabParam);
@@ -240,18 +101,13 @@
             if(document.getElementById('pass-input').value === CLAVE) {
                 document.getElementById('lock-screen').style.opacity = '0';
                 setTimeout(() => document.getElementById('lock-screen').style.display = 'none', 500);
-                localStorage.setItem('aura_v5_1_auth', 'ok');
+                localStorage.setItem('aura_v6_auth', 'ok');
             } else { document.getElementById('error-msg').classList.remove('hidden'); }
         }
 
         function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            const bd = document.getElementById('sidebar-backdrop');
-            if(sb.classList.contains('-translate-x-full')) {
-                sb.classList.remove('-translate-x-full'); bd.classList.remove('hidden'); setTimeout(()=>bd.classList.remove('opacity-0'), 10);
-            } else {
-                sb.classList.add('-translate-x-full'); bd.classList.add('opacity-0'); setTimeout(()=>bd.classList.add('hidden'), 300);
-            }
+            const sb = document.getElementById('sidebar'); const bd = document.getElementById('sidebar-backdrop');
+            if(sb.classList.contains('-translate-x-full')) { sb.classList.remove('-translate-x-full'); bd.classList.remove('hidden'); setTimeout(()=>bd.classList.remove('opacity-0'), 10); } else { sb.classList.add('-translate-x-full'); bd.classList.add('opacity-0'); setTimeout(()=>bd.classList.add('hidden'), 300); }
         }
 
         function switchTab(tab) {
@@ -265,8 +121,7 @@
             const color = bomba === 1 ? 'aura-cyan' : 'aura-purple';
             for(let i=1; i<=3; i++) {
                 const btn = document.getElementById(`b${bomba}-t${i}-btn`);
-                btn.className = "w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs";
-                btn.style.boxShadow = "none";
+                btn.className = "w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs"; btn.style.boxShadow = "none";
             }
             const activeBtn = document.getElementById(`b${bomba}-t${turno}-btn`);
             activeBtn.className = `w-8 h-8 rounded-full bg-${color} text-black font-bold text-xs`;
@@ -276,107 +131,45 @@
         }
 
         function actualizarInputs(bomba, turnoIdx) {
-            const data = turnosData[bomba][turnoIdx-1];
-            const infoLbl = document.getElementById(`info-b${bomba}-active`);
-            if(data && data.includes("-")) {
-                const parts = data.split("-");
-                document.getElementById(`start-b${bomba}`).value = parts[0];
-                document.getElementById(`end-b${bomba}`).value = parts[1];
-                infoLbl.innerText = `T${turnoIdx}: ${data}`;
-            } else {
-                document.getElementById(`start-b${bomba}`).value = "";
-                document.getElementById(`end-b${bomba}`).value = "";
-                infoLbl.innerText = "Vacío";
-            }
+            const data = turnosData[bomba][turnoIdx-1]; const infoLbl = document.getElementById(`info-b${bomba}-active`);
+            if(data && data.includes("-")) { const parts = data.split("-"); document.getElementById(`start-b${bomba}`).value = parts[0]; document.getElementById(`end-b${bomba}`).value = parts[1]; infoLbl.innerText = `T${turnoIdx}: ${data}`; } else { document.getElementById(`start-b${bomba}`).value = ""; document.getElementById(`end-b${bomba}`).value = ""; infoLbl.innerText = "Vacío"; }
         }
 
         function addLog(msg) {
             const container = document.getElementById('log-container');
-            if(container.innerText.includes("Esperando")) container.innerHTML = "";
-            const div = document.createElement('div');
-            div.className = "log-entry";
-            if(msg.includes("Auto")) div.style.color = "#ffff00"; 
-            if(msg.includes("Manual")) div.style.color = "#00ff00"; 
+            if(container.innerText.includes("Cargando")) container.innerHTML = "";
+            const div = document.createElement('div'); div.className = "log-entry";
+            if(msg.includes("Auto")) div.style.color = "#ffff00"; if(msg.includes("Manual")) div.style.color = "#00ff00"; 
             div.innerText = "> " + msg;
             container.prepend(div); 
         }
         function clearLogs() { document.getElementById('log-container').innerHTML = '<div class="text-white/30 italic">Esperando eventos...</div>'; }
 
-        // COUNTDOWN FUNCTIONS
         function startCountdown(bomba, minutes) {
-            if(minutes <= 0) return;
-            const display = document.getElementById(`countdown-b${bomba}`);
-            display.classList.remove('hidden');
-            
+            if(minutes <= 0) return; const display = document.getElementById(`countdown-b${bomba}`); display.classList.remove('hidden');
             let totalSeconds = minutes * 60;
-            
-            // Clear existing if any
-            if(bomba === 1 && intervalB1) clearInterval(intervalB1);
-            if(bomba === 2 && intervalB2) clearInterval(intervalB2);
-
-            const updateFunc = () => {
-                if(totalSeconds <= 0) {
-                    stopCountdown(bomba);
-                    return;
-                }
-                totalSeconds--;
-                const m = Math.floor(totalSeconds / 60);
-                const s = totalSeconds % 60;
-                display.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-            };
-
-            // Ejecutar inmediatamente y luego cada segundo
-            updateFunc();
-            if(bomba === 1) intervalB1 = setInterval(updateFunc, 1000);
-            if(bomba === 2) intervalB2 = setInterval(updateFunc, 1000);
+            if(bomba === 1 && intervalB1) clearInterval(intervalB1); if(bomba === 2 && intervalB2) clearInterval(intervalB2);
+            const updateFunc = () => { if(totalSeconds <= 0) { stopCountdown(bomba); return; } totalSeconds--; const m = Math.floor(totalSeconds / 60); const s = totalSeconds % 60; display.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`; };
+            updateFunc(); if(bomba === 1) intervalB1 = setInterval(updateFunc, 1000); if(bomba === 2) intervalB2 = setInterval(updateFunc, 1000);
         }
-
-        function stopCountdown(bomba) {
-            const display = document.getElementById(`countdown-b${bomba}`);
-            display.classList.add('hidden');
-            display.innerText = "00:00";
-            if(bomba === 1 && intervalB1) clearInterval(intervalB1);
-            if(bomba === 2 && intervalB2) clearInterval(intervalB2);
-        }
+        function stopCountdown(bomba) { const display = document.getElementById(`countdown-b${bomba}`); display.classList.add('hidden'); display.innerText = "00:00"; if(bomba === 1 && intervalB1) clearInterval(intervalB1); if(bomba === 2 && intervalB2) clearInterval(intervalB2); }
 
         function drawClock(bomba) {
-             const canvas = document.getElementById(`clock-b${bomba}`);
-             const ctx = canvas.getContext('2d');
-             const centerX = 110, centerY = 110, radius = 90;
-             const color = bomba === 1 ? '#00F2FF' : '#a855f7';
-             ctx.clearRect(0,0,220,220);
-             ctx.beginPath(); ctx.arc(centerX, centerY, radius, 0, 2*Math.PI); ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth=12; ctx.stroke();
+             const canvas = document.getElementById(`clock-b${bomba}`); const ctx = canvas.getContext('2d');
+             const centerX = 110, centerY = 110, radius = 90; const color = bomba === 1 ? '#00F2FF' : '#a855f7';
+             ctx.clearRect(0,0,220,220); ctx.beginPath(); ctx.arc(centerX, centerY, radius, 0, 2*Math.PI); ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth=12; ctx.stroke();
              ctx.font = "10px monospace"; ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.textAlign = "center";
-             ctx.fillText("00h", centerX, centerY-radius-12); ctx.fillText("12h", centerX, centerY+radius+20);
-             ctx.fillText("06h", centerX+radius+20, centerY+3); ctx.fillText("18h", centerX-radius-20, centerY+3);
-             
-             turnosData[bomba].forEach(t => {
-                 if(t && t.includes("-")) {
-                     const [s,e] = t.split("-");
-                     const sD = ((parseInt(s.split(":")[0])*60 + parseInt(s.split(":")[1]))/1440)*360;
-                     const eD = ((parseInt(e.split(":")[0])*60 + parseInt(e.split(":")[1]))/1440)*360;
-                     ctx.beginPath(); ctx.arc(centerX, centerY, radius, (sD-90)*Math.PI/180, (eD-90)*Math.PI/180);
-                     ctx.strokeStyle=color; ctx.lineWidth=12; ctx.stroke();
-                 }
-             });
+             ctx.fillText("00h", centerX, centerY-radius-12); ctx.fillText("12h", centerX, centerY+radius+20); ctx.fillText("06h", centerX+radius+20, centerY+3); ctx.fillText("18h", centerX-radius-20, centerY+3);
+             turnosData[bomba].forEach(t => { if(t && t.includes("-")) { const [s,e] = t.split("-"); const sD = ((parseInt(s.split(":")[0])*60 + parseInt(s.split(":")[1]))/1440)*360; const eD = ((parseInt(e.split(":")[0])*60 + parseInt(e.split(":")[1]))/1440)*360; ctx.beginPath(); ctx.arc(centerX, centerY, radius, (sD-90)*Math.PI/180, (eD-90)*Math.PI/180); ctx.strokeStyle=color; ctx.lineWidth=12; ctx.stroke(); } });
         }
 
-        function syncTime() {
-            const now = new Date();
-            const str = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-            enviar("casa/sistema/set_hora", str);
-            document.getElementById("system-time").innerText = "Sincronizando...";
-        }
+        function syncTime() { const now = new Date(); const str = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`; enviar("casa/sistema/set_hora", str); document.getElementById("system-time").innerText = "Sincronizando..."; }
 
-        const host = "7e2fd3d035dd4308b9d04e70e8989f24.s1.eu.hivemq.cloud";
-        const port = 8884;
-        const clientId = "AuraV5-" + Math.random().toString(16).substr(2, 8);
+        const host = "7e2fd3d035dd4308b9d04e70e8989f24.s1.eu.hivemq.cloud"; const port = 8884; const clientId = "AuraV6-Web-" + Math.random().toString(16).substr(2, 8);
         const client = new Paho.MQTT.Client(host, port, clientId);
 
         client.onMessageArrived = (msg) => {
-            const topic = msg.destinationName;
-            const payload = msg.payloadString;
-
+            const topic = msg.destinationName; const payload = msg.payloadString;
             if (topic === "casa/sistema/hora") document.getElementById("system-time").innerText = payload;
             if (topic === "casa/sistema/logs") addLog(payload);
 
@@ -384,60 +177,29 @@
             if (bIdx > 0) {
                 if (topic.includes("estado")) {
                     const isOn = (payload === "ON" || payload.includes("ENCENDIDA"));
-                    document.getElementById(`switch-b${bIdx}`).checked = isOn;
-                    document.getElementById(`txt-status-b${bIdx}`).innerText = isOn ? "ON" : "OFF";
-                    if(isOn) {
-                        document.querySelector(`#switch-b${bIdx} + label`).style.backgroundColor = (bIdx===1?'#00F2FF':'#a855f7');
-                        // SI SE ENCIENDE Y HAY TIMER, INICIAR CUENTA REGRESIVA
-                        let duration = (bIdx === 1) ? timerDurationB1 : timerDurationB2;
-                        if(duration > 0) startCountdown(bIdx, duration);
-                    } else {
-                        document.querySelector(`#switch-b${bIdx} + label`).style.backgroundColor = '#374151';
-                        // SI SE APAGA, DETENER CUENTA
-                        stopCountdown(bIdx);
-                    }
+                    document.getElementById(`switch-b${bIdx}`).checked = isOn; document.getElementById(`txt-status-b${bIdx}`).innerText = isOn ? "ON" : "OFF";
+                    if(isOn) { document.querySelector(`#switch-b${bIdx} + label`).style.backgroundColor = (bIdx===1?'#00F2FF':'#a855f7'); let duration = (bIdx === 1) ? timerDurationB1 : timerDurationB2; if(duration > 0) startCountdown(bIdx, duration); } else { document.querySelector(`#switch-b${bIdx} + label`).style.backgroundColor = '#374151'; stopCountdown(bIdx); }
                 }
                 if (topic.includes("info")) {
-                    const tN = parseInt(topic.slice(-1));
-                    if(tN>=1 && tN<=3) {
-                        turnosData[bIdx][tN-1] = (payload==="OFF" || payload==="DESACTIVADO") ? null : payload.replace(" a ", "-");
-                        drawClock(bIdx);
-                        if((bIdx===1?currentSubTabB1:currentSubTabB2) === tN) actualizarInputs(bIdx, tN);
-                    }
+                    const tN = parseInt(topic.slice(-1)); if(tN>=1 && tN<=3) { turnosData[bIdx][tN-1] = (payload==="OFF" || payload==="DESACTIVADO") ? null : payload.replace(" a ", "-"); drawClock(bIdx); if((bIdx===1?currentSubTabB1:currentSubTabB2) === tN) actualizarInputs(bIdx, tN); }
                 }
             }
         };
 
-        client.connect({
-            useSSL: true, userName: "bombas", password: "Halcon2015",
-            onSuccess: () => {
+        client.connect({ useSSL: true, userName: "bombas", password: "Halcon2015", onSuccess: () => {
                 document.getElementById("conn-dot").className = "w-2 h-2 rounded-full bg-aura-cyan shadow-[0_0_10px_#00F2FF]";
-                client.subscribe("casa/sistema/hora");
-                client.subscribe("casa/sistema/logs"); 
-                client.subscribe("casa/bomba1/#"); 
-                client.subscribe("casa/bomba2/#"); 
+                client.subscribe("casa/sistema/hora"); client.subscribe("casa/sistema/logs"); client.subscribe("casa/bomba1/#"); client.subscribe("casa/bomba2/#"); 
+                // PEDIR EL HISTORIAL AL CONECTAR
+                setTimeout(() => { enviar("casa/sistema/cmd", "get_logs"); }, 1000);
             }
         });
 
         function enviar(t, m) { client.send(t, m); }
         function toggleBomba(id) { enviar(`casa/bomba${id}/comando`, document.getElementById(`switch-b${id}`).checked ? "ON" : "OFF"); }
-        function programarReloj(id) { 
-            const tIdx = (id===1)?currentSubTabB1:currentSubTabB2;
-            enviar(`casa/bomba${id}/turno${tIdx}`, `${document.getElementById(`start-b${id}`).value}-${document.getElementById(`end-b${id}`).value}`);
-        }
+        function programarReloj(id) { const tIdx = (id===1)?currentSubTabB1:currentSubTabB2; enviar(`casa/bomba${id}/turno${tIdx}`, `${document.getElementById(`start-b${id}`).value}-${document.getElementById(`end-b${id}`).value}`); }
         function borrarTurno(id) { enviar(`casa/bomba${id}/turno${(id===1)?currentSubTabB1:currentSubTabB2}`, "OFF"); }
-        
-        function setTimer(id, v) { 
-            enviar(`casa/bomba${id}/set_timer`, v.toString()); 
-        }
-        
-        function updateSlider(id, v) { 
-            document.getElementById(`val-timer-b${id}`).innerText = v>0?v+"m":"Off";
-            // Guardar valor localmente para la cuenta regresiva
-            if(id === 1) timerDurationB1 = parseInt(v);
-            if(id === 2) timerDurationB2 = parseInt(v);
-        }
-
+        function setTimer(id, v) { enviar(`casa/bomba${id}/set_timer`, v.toString()); }
+        function updateSlider(id, v) { document.getElementById(`val-timer-b${id}`).innerText = v>0?v+"m":"Off"; if(id === 1) timerDurationB1 = parseInt(v); if(id === 2) timerDurationB2 = parseInt(v); }
         drawClock(1); drawClock(2);
     </script>
 </body>
