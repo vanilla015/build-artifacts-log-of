@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Aura Control System V6</title>
+    <title>Aura Control System V7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { 'aura-black': '#050505', 'aura-cyan': '#00F2FF', 'aura-purple': '#a855f7', 'aura-panel': '#111111', 'aura-log': '#0a0a0a' }, animation: { 'pulse-text': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', } } } }
+        tailwind.config = { theme: { extend: { colors: { 'aura-black': '#050505', 'aura-cyan': '#00F2FF', 'aura-purple': '#a855f7', 'aura-panel': '#111111', 'aura-log': '#0a0a0a' }, animation: { 'pulse-text': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', 'spin-slow': 'spin 3s linear infinite' } } } }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
@@ -26,6 +26,17 @@
 
 <body class="bg-aura-black text-white selection:bg-aura-cyan/30">
     <div id="tsparticles"></div>
+
+    <div id="reconnect-screen" class="fixed inset-0 z-[110] bg-black/95 flex flex-col items-center justify-center hidden">
+        <div class="relative w-24 h-24 mb-6">
+            <div class="absolute inset-0 border-t-4 border-aura-cyan rounded-full animate-spin"></div>
+            <div class="absolute inset-2 border-b-4 border-aura-purple rounded-full animate-spin-slow"></div>
+        </div>
+        <h2 id="recon-title" class="text-2xl font-bold text-white mb-2 tracking-widest animate-pulse">SINCRONIZANDO</h2>
+        <p id="recon-desc" class="text-white/40 text-xs">Restableciendo conexión segura...</p>
+        <button id="btn-retry" onclick="iniciarSistema(true)" class="hidden mt-8 px-8 py-3 bg-red-500/20 text-red-500 border border-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)]">REINTENTAR AHORA</button>
+    </div>
+
     <div id="lock-screen" class="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center">
         <div class="text-center p-8 w-80 border border-white/10 rounded-2xl bg-aura-panel">
             <h2 class="text-2xl font-bold text-aura-cyan mb-6 tracking-widest">AURA SECURITY</h2>
@@ -43,7 +54,7 @@
             <button onclick="switchTab('guille'); toggleSidebar()" id="link-guille" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-purple hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">GUILLE (B2)<span class="w-2 h-2 rounded-full bg-aura-purple opacity-0 group-hover:opacity-100 transition-opacity"></span></button>
             <button onclick="switchTab('logs'); toggleSidebar()" id="link-logs" class="text-left p-4 rounded-xl bg-white/5 hover:bg-white hover:text-black transition-all font-bold border border-white/5">LOGS SISTEMA</button>
         </nav>
-        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System v6.0</div>
+        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System v7.0</div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
@@ -89,13 +100,27 @@
         let currentSubTabB1 = 1, currentSubTabB2 = 1;
         const turnosData = { 1: [null, null, null], 2: [null, null, null] };
         let timerDurationB1 = 0; let timerDurationB2 = 0; let intervalB1 = null; let intervalB2 = null;
+        let client = null; // Variable global para el cliente
 
+        // --- INICIO Y CONTROL DE SESIÓN ---
         window.onload = function() {
             if(localStorage.getItem('aura_v6_auth') === 'ok') document.getElementById('lock-screen').style.display = 'none';
             const params = new URLSearchParams(window.location.search);
             const tabParam = params.get('tab');
             if(tabParam && (tabParam === 'juan' || tabParam === 'guille' || tabParam === 'logs')) switchTab(tabParam);
+            
+            // Iniciar conexión al cargar
+            iniciarSistema(false);
         };
+
+        // --- DETECTOR DE VISIBILIDAD (EL FIX QUE PEDISTE) ---
+        // Cuando vuelves a la pestaña, forzamos reinicio de conexión
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                console.log("App visible: Forzando reconexión...");
+                iniciarSistema(true);
+            }
+        });
 
         function verificarPassword() {
             if(document.getElementById('pass-input').value === CLAVE) {
@@ -103,6 +128,93 @@
                 setTimeout(() => document.getElementById('lock-screen').style.display = 'none', 500);
                 localStorage.setItem('aura_v6_auth', 'ok');
             } else { document.getElementById('error-msg').classList.remove('hidden'); }
+        }
+
+        // --- LÓGICA DE CONEXIÓN ROBUSTA ---
+        function iniciarSistema(forzarReconexion) {
+            // Mostrar pantalla de carga
+            const screen = document.getElementById('reconnect-screen');
+            const btnRetry = document.getElementById('btn-retry');
+            const title = document.getElementById('recon-title');
+            const desc = document.getElementById('recon-desc');
+            
+            screen.classList.remove('hidden');
+            btnRetry.classList.add('hidden');
+            title.innerText = "SINCRONIZANDO";
+            desc.innerText = "Conectando con el servidor...";
+
+            // Reseteo visual de datos (para no mostrar info vieja)
+            document.getElementById("conn-dot").className = "w-2 h-2 rounded-full bg-red-500";
+            document.getElementById("system-time").innerText = "--:--:--";
+            resetUI(); // Función para limpiar interfaz
+
+            // Desconectar cliente previo si existe
+            if (client && client.isConnected()) {
+                try { client.disconnect(); } catch(e) {}
+            }
+
+            // Nueva conexión
+            const host = "7e2fd3d035dd4308b9d04e70e8989f24.s1.eu.hivemq.cloud"; 
+            const port = 8884; 
+            // Generar nuevo ID para evitar conflictos de "ghost session"
+            const clientId = "AuraV7-Web-" + Math.random().toString(16).substr(2, 8);
+            
+            client = new Paho.MQTT.Client(host, port, clientId);
+            client.onMessageArrived = onMessage;
+            client.onConnectionLost = onConnectionLost;
+
+            client.connect({ 
+                useSSL: true, 
+                userName: "bombas", 
+                password: "Halcon2015", 
+                timeout: 10,
+                onSuccess: onConnectSuccess,
+                onFailure: onConnectFailure
+            });
+        }
+
+        function onConnectSuccess() {
+            console.log("Conectado!");
+            document.getElementById("conn-dot").className = "w-2 h-2 rounded-full bg-aura-cyan shadow-[0_0_10px_#00F2FF]";
+            
+            // Suscripciones
+            client.subscribe("casa/sistema/hora"); 
+            client.subscribe("casa/sistema/logs"); 
+            client.subscribe("casa/bomba1/#"); 
+            client.subscribe("casa/bomba2/#"); 
+            
+            // Pedir datos frescos
+            setTimeout(() => { enviar("casa/sistema/cmd", "get_logs"); }, 500);
+
+            // Ocultar pantalla de carga
+            setTimeout(() => {
+                document.getElementById('reconnect-screen').classList.add('hidden');
+            }, 1000); // 1 seg de gracia para recibir datos
+        }
+
+        function onConnectFailure(responseObject) {
+            console.log("Fallo conexión: " + responseObject.errorMessage);
+            document.getElementById('recon-title').innerText = "ERROR DE CONEXIÓN";
+            document.getElementById('recon-desc').innerText = "No se pudo conectar al servidor.";
+            document.getElementById('btn-retry').classList.remove('hidden');
+        }
+
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Conexión perdida: " + responseObject.errorMessage);
+                // Si se pierde sola (sin que minimicemos), mostramos pantalla de carga
+                iniciarSistema(true); 
+            }
+        }
+
+        function resetUI() {
+            // Pone los interruptores en OFF visualmente hasta recibir confirmación real
+            document.getElementById('switch-b1').checked = false;
+            document.getElementById('switch-b2').checked = false;
+            document.getElementById('txt-status-b1').innerText = "--";
+            document.getElementById('txt-status-b2').innerText = "--";
+            document.querySelector(`#switch-b1 + label`).style.backgroundColor = '#374151';
+            document.querySelector(`#switch-b2 + label`).style.backgroundColor = '#374151';
         }
 
         function toggleSidebar() {
@@ -137,7 +249,7 @@
 
         function addLog(msg) {
             const container = document.getElementById('log-container');
-            if(container.innerText.includes("Cargando")) container.innerHTML = "";
+            if(container.innerText.includes("Cargando") || container.innerText.includes("Esperando")) container.innerHTML = "";
             const div = document.createElement('div'); div.className = "log-entry";
             if(msg.includes("Auto")) div.style.color = "#ffff00"; if(msg.includes("Manual")) div.style.color = "#00ff00"; 
             div.innerText = "> " + msg;
@@ -165,10 +277,7 @@
 
         function syncTime() { const now = new Date(); const str = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`; enviar("casa/sistema/set_hora", str); document.getElementById("system-time").innerText = "Sincronizando..."; }
 
-        const host = "7e2fd3d035dd4308b9d04e70e8989f24.s1.eu.hivemq.cloud"; const port = 8884; const clientId = "AuraV6-Web-" + Math.random().toString(16).substr(2, 8);
-        const client = new Paho.MQTT.Client(host, port, clientId);
-
-        client.onMessageArrived = (msg) => {
+        function onMessage(msg) {
             const topic = msg.destinationName; const payload = msg.payloadString;
             if (topic === "casa/sistema/hora") document.getElementById("system-time").innerText = payload;
             if (topic === "casa/sistema/logs") addLog(payload);
@@ -186,15 +295,7 @@
             }
         };
 
-        client.connect({ useSSL: true, userName: "bombas", password: "Halcon2015", onSuccess: () => {
-                document.getElementById("conn-dot").className = "w-2 h-2 rounded-full bg-aura-cyan shadow-[0_0_10px_#00F2FF]";
-                client.subscribe("casa/sistema/hora"); client.subscribe("casa/sistema/logs"); client.subscribe("casa/bomba1/#"); client.subscribe("casa/bomba2/#"); 
-                // PEDIR EL HISTORIAL AL CONECTAR
-                setTimeout(() => { enviar("casa/sistema/cmd", "get_logs"); }, 1000);
-            }
-        });
-
-        function enviar(t, m) { client.send(t, m); }
+        function enviar(t, m) { if(client.isConnected()) client.send(t, m); }
         function toggleBomba(id) { enviar(`casa/bomba${id}/comando`, document.getElementById(`switch-b${id}`).checked ? "ON" : "OFF"); }
         function programarReloj(id) { const tIdx = (id===1)?currentSubTabB1:currentSubTabB2; enviar(`casa/bomba${id}/turno${tIdx}`, `${document.getElementById(`start-b${id}`).value}-${document.getElementById(`end-b${id}`).value}`); }
         function borrarTurno(id) { enviar(`casa/bomba${id}/turno${(id===1)?currentSubTabB1:currentSubTabB2}`, "OFF"); }
