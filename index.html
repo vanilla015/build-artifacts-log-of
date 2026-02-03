@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Aura Control System V7</title>
+    <title>Aura Control System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: { 'aura-black': '#050505', 'aura-cyan': '#00F2FF', 'aura-purple': '#a855f7', 'aura-panel': '#111111', 'aura-log': '#0a0a0a' }, animation: { 'pulse-text': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', 'spin-slow': 'spin 3s linear infinite' } } } }
@@ -54,7 +54,7 @@
             <button onclick="switchTab('guille'); toggleSidebar()" id="link-guille" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-purple hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">GUILLE (B2)<span class="w-2 h-2 rounded-full bg-aura-purple opacity-0 group-hover:opacity-100 transition-opacity"></span></button>
             <button onclick="switchTab('logs'); toggleSidebar()" id="link-logs" class="text-left p-4 rounded-xl bg-white/5 hover:bg-white hover:text-black transition-all font-bold border border-white/5">LOGS SISTEMA</button>
         </nav>
-        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System v7.0</div>
+        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System</div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
@@ -157,7 +157,7 @@
             const host = "7e2fd3d035dd4308b9d04e70e8989f24.s1.eu.hivemq.cloud"; 
             const port = 8884; 
             // Generar nuevo ID para evitar conflictos de "ghost session"
-            const clientId = "AuraV7-Web-" + Math.random().toString(16).substr(2, 8);
+            const clientId = "Aura-Web-" + Math.random().toString(16).substr(2, 8);
             
             client = new Paho.MQTT.Client(host, port, clientId);
             client.onMessageArrived = onMessage;
