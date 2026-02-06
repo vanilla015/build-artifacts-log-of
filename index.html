@@ -3,29 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Aura Control System</title>
+    <title>Aura Control </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: { 'aura-black': '#050505', 'aura-cyan': '#00F2FF', 'aura-purple': '#a855f7', 'aura-panel': '#111111', 'aura-log': '#0a0a0a' }, animation: { 'pulse-text': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite', 'spin-slow': 'spin 3s linear infinite' } } } }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <style>
+        /* Estilos Base por si falla Tailwind */
         body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; overflow-x: hidden; }
         .tab-content { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .tab-content.active { display: block; opacity: 1; }
+        
+        /* Toggle Switch */
         .toggle-checkbox:checked { right: 0; border-color: #00F2FF; }
         .toggle-checkbox:checked + .toggle-label { background-color: #00F2FF; }
         .toggle-checkbox { right: 50%; }
         .toggle-label { width: 3.5rem; height: 1.75rem; }
+        
         input[type="time"] { color-scheme: dark; }
         #tsparticles { position: fixed; inset: 0; z-index: -10; }
         #sidebar { transition: transform 0.3s ease-in-out; }
         .backdrop { transition: opacity 0.3s ease-in-out; }
+
+        /* Loader Nativo (CSS Puro) */
+        #boot-loader { position: fixed; inset: 0; background: #050505; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-ring { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid #00F2FF; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 
 <body class="bg-aura-black text-white selection:bg-aura-cyan/30">
     <div id="tsparticles"></div>
+
+    <div id="boot-loader">
+        <div class="loader-ring"></div>
+        <h2 class="text-aura-cyan font-bold tracking-widest text-sm">INICIANDO SISTEMA...</h2>
+    </div>
 
     <div id="reconnect-screen" class="fixed inset-0 z-[110] bg-black/95 flex flex-col items-center justify-center hidden">
         <div class="relative w-24 h-24 mb-6">
@@ -54,7 +68,7 @@
             <button onclick="switchTab('guille'); toggleSidebar()" id="link-guille" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-purple hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">GUILLE (B2)<span class="w-2 h-2 rounded-full bg-aura-purple opacity-0 group-hover:opacity-100 transition-opacity"></span></button>
             <button onclick="switchTab('logs'); toggleSidebar()" id="link-logs" class="text-left p-4 rounded-xl bg-white/5 hover:bg-white hover:text-black transition-all font-bold border border-white/5">LOGS SISTEMA</button>
         </nav>
-        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System/div>
+        <div class="mt-auto text-xs text-white/20 text-center">Aura Control</div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
@@ -77,6 +91,7 @@
                 <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b1" class="text-aura-cyan font-bold">Off</span></div><input type="range" id="slider-b1" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-cyan" oninput="updateSlider(1, this.value)"></div>
             </div>
         </div>
+        
         <div id="tab-guille" class="tab-content w-full">
             <div class="p-6 rounded-3xl bg-aura-panel border border-white/10 relative">
                 <div class="flex justify-center mb-6 relative"><canvas id="clock-b2" width="220" height="220"></canvas><div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"><span class="text-xs text-white/30 uppercase">Estado</span><span id="txt-status-b2" class="text-xl font-bold text-white">OFF</span></div></div>
@@ -85,6 +100,7 @@
                 <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b2" class="text-aura-purple font-bold">Off</span></div><input type="range" id="slider-b2" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-purple" oninput="updateSlider(2, this.value)"></div>
             </div>
         </div>
+        
         <div id="tab-logs" class="tab-content w-full">
             <div class="p-6 rounded-3xl bg-aura-panel border border-white/10 relative h-[60vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Registro Eventos</h2><button onclick="clearLogs()" class="text-xs text-white/40 hover:text-white">LIMPIAR</button></div>
@@ -95,7 +111,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
     <script>
-        tsParticles.load("tsparticles", { particles: { number: { value: 30 }, color: { value: ["#00F2FF", "#a855f7"] }, opacity: { value: 0.2 }, size: { value: 2 }, move: { enable: true, speed: 0.3 }, links: { enable: true, color: "#ffffff", opacity: 0.05 } } });
+        // Carga segura de partículas
+        try {
+            tsParticles.load("tsparticles", { particles: { number: { value: 30 }, color: { value: ["#00F2FF", "#a855f7"] }, opacity: { value: 0.2 }, size: { value: 2 }, move: { enable: true, speed: 0.3 }, links: { enable: true, color: "#ffffff", opacity: 0.05 } } });
+        } catch(e) { console.log("Particulas off"); }
+
         const CLAVE = "hola1234"; 
         let currentSubTabB1 = 1, currentSubTabB2 = 1;
         const turnosData = { 1: [null, null, null], 2: [null, null, null] };
@@ -107,13 +127,29 @@
         let client = null; 
 
         window.onload = function() {
-            if(localStorage.getItem('aura_v6_auth') === 'ok') document.getElementById('lock-screen').style.display = 'none';
+            // 1. Quitar el cargador inicial
+            document.getElementById('boot-loader').style.display = 'none';
+
+            // 2. Revisar Autenticación
+            if(localStorage.getItem('aura_v6_auth') === 'ok') {
+                document.getElementById('lock-screen').style.display = 'none';
+            }
+
+            // 3. Revisar Pestañas
             const params = new URLSearchParams(window.location.search);
             const tabParam = params.get('tab');
-            if(tabParam && (tabParam === 'juan' || tabParam === 'guille' || tabParam === 'logs')) switchTab(tabParam);
+            if(tabParam && (tabParam === 'juan' || tabParam === 'guille' || tabParam === 'logs')) {
+                switchTab(tabParam);
+            } else {
+                // Forzar pestaña 1 si no hay params (evita pantalla negra)
+                switchTab('juan');
+            }
+
+            // 4. Iniciar Conexión
             iniciarSistema(false);
         };
 
+        // Reconexión al volver a la pestaña
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
                 console.log("App visible: Forzando reconexión...");
@@ -246,7 +282,6 @@
         function clearLogs() { document.getElementById('log-container').innerHTML = '<div class="text-white/30 italic">Esperando eventos...</div>'; }
 
         function startCountdown(bomba, minutes) {
-            // SI RECIBIMOS 0, PARAMOS TODO
             if(!minutes || minutes <= 0) { stopCountdown(bomba); return; }
             
             const display = document.getElementById(`countdown-b${bomba}`); 
@@ -301,7 +336,6 @@
                     if(isOn) { 
                         document.querySelector(`#switch-b${bIdx} + label`).style.backgroundColor = (bIdx===1?'#00F2FF':'#a855f7'); 
                         
-                        // Leer el slider actual (que el usuario ve) para el contador visual
                         const sliderVal = parseInt(document.getElementById(`slider-b${bIdx}`).value);
                         if(sliderVal > 0) {
                             startCountdown(bIdx, sliderVal); 
@@ -322,25 +356,21 @@
 
         function enviar(t, m) { if(client.isConnected()) client.send(t, m); }
         
-        // --- AQUÍ ESTÁ LA NUEVA LÓGICA DE ACTIVACIÓN ---
+        // --- LOGICA DE ENVIO DEL TIMER SOLO AL ACTIVAR ---
         function toggleBomba(id) { 
             const isTurningOn = document.getElementById(`switch-b${id}`).checked;
             
             if (isTurningOn) {
-                // 1. Obtener valor actual del slider (0 si está en off)
                 const sliderVal = document.getElementById(`slider-b${id}`).value;
                 const valInt = parseInt(sliderVal);
                 
-                // 2. Enviar primero la configuración del timer
                 enviar(`casa/bomba${id}/set_timer`, valInt.toString());
                 
-                // 3. Esperar 50ms para que el ESP32 guarde el dato
                 setTimeout(() => {
                     enviar(`casa/bomba${id}/comando`, "ON");
                 }, 50);
                 
             } else {
-                // Apagar directo
                 enviar(`casa/bomba${id}/comando`, "OFF");
             }
         }
@@ -348,14 +378,11 @@
         function programarReloj(id) { const tIdx = (id===1)?currentSubTabB1:currentSubTabB2; enviar(`casa/bomba${id}/turno${tIdx}`, `${document.getElementById(`start-b${id}`).value}-${document.getElementById(`end-b${id}`).value}`); }
         function borrarTurno(id) { enviar(`casa/bomba${id}/turno${(id===1)?currentSubTabB1:currentSubTabB2}`, "OFF"); }
         
-        // --- EL SLIDER YA NO ENVÍA NADA, SOLO ACTUALIZA TEXTO LOCAL ---
         function setTimer(id, v) { 
-            // Esta función queda vacía porque el envío se hace en toggleBomba
-            // Mantenemos la función para no romper referencias si las hubiera
+            // Función pasiva, el envío se hace en toggleBomba
         }
         
         function updateSlider(id, v) { 
-            // Solo actualiza la pantalla
             document.getElementById(`val-timer-b${id}`).innerText = v > 0 ? v + "m" : "Off"; 
             if(id === 1) timerDurationB1 = parseInt(v); 
             if(id === 2) timerDurationB2 = parseInt(v); 
