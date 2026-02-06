@@ -54,7 +54,7 @@
             <button onclick="switchTab('guille'); toggleSidebar()" id="link-guille" class="text-left p-4 rounded-xl bg-white/5 hover:bg-aura-purple hover:text-black transition-all font-bold border border-white/5 flex items-center justify-between group">GUILLE (B2)<span class="w-2 h-2 rounded-full bg-aura-purple opacity-0 group-hover:opacity-100 transition-opacity"></span></button>
             <button onclick="switchTab('logs'); toggleSidebar()" id="link-logs" class="text-left p-4 rounded-xl bg-white/5 hover:bg-white hover:text-black transition-all font-bold border border-white/5">LOGS SISTEMA</button>
         </nav>
-        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System</div>
+        <div class="mt-auto text-xs text-white/20 text-center">Aura Control System/div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 px-4 py-3 flex justify-between items-center">
@@ -74,7 +74,7 @@
                 <div class="flex justify-center mb-6 relative"><canvas id="clock-b1" width="220" height="220"></canvas><div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"><span class="text-xs text-white/30 uppercase">Estado</span><span id="txt-status-b1" class="text-xl font-bold text-white">OFF</span></div></div>
                 <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/5"><div><span class="font-bold text-lg text-white block">Bomba 1 (Juan)</span><span id="countdown-b1" class="hidden text-sm font-mono text-aura-cyan animate-pulse-text">00:00</span></div><div class="relative inline-block w-14 align-middle select-none"><input type="checkbox" id="switch-b1" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-aura-panel appearance-none cursor-pointer" onchange="toggleBomba(1)"><label for="switch-b1" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label></div></div>
                 <div class="bg-black/30 rounded-2xl p-5 border border-white/5 mb-4"><div class="flex justify-between items-center mb-4"><span class="text-xs text-aura-cyan uppercase font-bold">Turnos</span><div class="flex gap-2"><button onclick="setSubTab(1, 1)" id="b1-t1-btn" class="w-8 h-8 rounded-full bg-aura-cyan text-black font-bold text-xs shadow-[0_0_10px_rgba(0,242,255,0.5)]">1</button><button onclick="setSubTab(1, 2)" id="b1-t2-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">2</button><button onclick="setSubTab(1, 3)" id="b1-t3-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">3</button></div></div><div class="flex gap-3 mb-3"><input type="time" id="start-b1" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-cyan"><input type="time" id="end-b1" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-cyan"></div><div class="flex gap-2"><button onclick="borrarTurno(1)" class="flex-1 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg text-xs font-bold">BORRAR</button><button onclick="programarReloj(1)" class="flex-[2] py-2 bg-white/10 hover:bg-aura-cyan hover:text-black rounded-lg text-xs font-bold">GUARDAR</button></div><p id="info-b1-active" class="text-xs text-center mt-3 text-white/40 h-4">--</p></div>
-                <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b1" class="text-aura-cyan font-bold">Off</span></div><input type="range" id="slider-b1" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-cyan" oninput="updateSlider(1, this.value)" onchange="setTimer(1, this.value)"></div>
+                <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b1" class="text-aura-cyan font-bold">Off</span></div><input type="range" id="slider-b1" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-cyan" oninput="updateSlider(1, this.value)"></div>
             </div>
         </div>
         <div id="tab-guille" class="tab-content w-full">
@@ -82,7 +82,7 @@
                 <div class="flex justify-center mb-6 relative"><canvas id="clock-b2" width="220" height="220"></canvas><div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"><span class="text-xs text-white/30 uppercase">Estado</span><span id="txt-status-b2" class="text-xl font-bold text-white">OFF</span></div></div>
                 <div class="flex justify-between items-center mb-6 bg-white/5 p-4 rounded-xl border border-white/5"><div><span class="font-bold text-lg text-white block">Bomba 2 (Guille)</span><span id="countdown-b2" class="hidden text-sm font-mono text-aura-purple animate-pulse-text">00:00</span></div><div class="relative inline-block w-14 align-middle select-none"><input type="checkbox" id="switch-b2" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-aura-panel appearance-none cursor-pointer" onchange="toggleBomba(2)"><label for="switch-b2" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label></div></div>
                 <div class="bg-black/30 rounded-2xl p-5 border border-white/5 mb-4"><div class="flex justify-between items-center mb-4"><span class="text-xs text-aura-purple uppercase font-bold">Turnos</span><div class="flex gap-2"><button onclick="setSubTab(2, 1)" id="b2-t1-btn" class="w-8 h-8 rounded-full bg-aura-purple text-black font-bold text-xs shadow-[0_0_10px_rgba(168,85,247,0.5)]">1</button><button onclick="setSubTab(2, 2)" id="b2-t2-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">2</button><button onclick="setSubTab(2, 3)" id="b2-t3-btn" class="w-8 h-8 rounded-full bg-white/10 text-white font-bold text-xs">3</button></div></div><div class="flex gap-3 mb-3"><input type="time" id="start-b2" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-purple"><input type="time" id="end-b2" class="w-1/2 bg-white/5 border border-white/10 rounded-lg py-2 px-1 text-center outline-none focus:border-aura-purple"></div><div class="flex gap-2"><button onclick="borrarTurno(2)" class="flex-1 py-2 bg-red-500/10 text-red-500 rounded-lg text-xs font-bold">BORRAR</button><button onclick="programarReloj(2)" class="flex-[2] py-2 bg-white/10 hover:bg-aura-purple hover:text-black rounded-lg text-xs font-bold">GUARDAR</button></div><p id="info-b2-active" class="text-xs text-center mt-3 text-white/40 h-4">--</p></div>
-                <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b2" class="text-aura-purple font-bold">Off</span></div><input type="range" id="slider-b2" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-purple" oninput="updateSlider(2, this.value)" onchange="setTimer(2, this.value)"></div>
+                <div class="mt-6"><div class="flex justify-between text-xs text-white/50 mb-2"><span>Timer</span><span id="val-timer-b2" class="text-aura-purple font-bold">Off</span></div><input type="range" id="slider-b2" min="0" max="60" value="0" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-aura-purple" oninput="updateSlider(2, this.value)"></div>
             </div>
         </div>
         <div id="tab-logs" class="tab-content w-full">
@@ -100,7 +100,6 @@
         let currentSubTabB1 = 1, currentSubTabB2 = 1;
         const turnosData = { 1: [null, null, null], 2: [null, null, null] };
         
-        // --- CORRECCIÓN 1: Variables de timer inicializadas en 0 ---
         let timerDurationB1 = 0; 
         let timerDurationB2 = 0; 
         let intervalB1 = null; 
@@ -246,13 +245,9 @@
         }
         function clearLogs() { document.getElementById('log-container').innerHTML = '<div class="text-white/30 italic">Esperando eventos...</div>'; }
 
-        // --- CORRECCIÓN 2: Lógica de Countdown segura ---
         function startCountdown(bomba, minutes) {
-            // SI RECIBIMOS 0, PARAMOS TODO Y SALIMOS
-            if(!minutes || minutes <= 0) { 
-                stopCountdown(bomba); 
-                return; 
-            }
+            // SI RECIBIMOS 0, PARAMOS TODO
+            if(!minutes || minutes <= 0) { stopCountdown(bomba); return; }
             
             const display = document.getElementById(`countdown-b${bomba}`); 
             display.classList.remove('hidden');
@@ -306,14 +301,12 @@
                     if(isOn) { 
                         document.querySelector(`#switch-b${bIdx} + label`).style.backgroundColor = (bIdx===1?'#00F2FF':'#a855f7'); 
                         
-                        // --- CORRECCIÓN 3: LEER DIRECTAMENTE DEL SLIDER VISIBLE ---
-                        // Esto evita que use una variable vieja. Leemos lo que el usuario ve ahora.
+                        // Leer el slider actual (que el usuario ve) para el contador visual
                         const sliderVal = parseInt(document.getElementById(`slider-b${bIdx}`).value);
-                        
                         if(sliderVal > 0) {
                             startCountdown(bIdx, sliderVal); 
                         } else {
-                            stopCountdown(bIdx); // Asegurar que pare si es 0
+                            stopCountdown(bIdx); 
                         }
 
                     } else { 
@@ -329,24 +322,40 @@
 
         function enviar(t, m) { if(client.isConnected()) client.send(t, m); }
         
-        // --- CORRECCIÓN 4: Toggle Bomba envía comando normal, el ESP decide si usar timer o no basado en su memoria,
-        // pero aquí solo mandamos ON/OFF ---
+        // --- AQUÍ ESTÁ LA NUEVA LÓGICA DE ACTIVACIÓN ---
         function toggleBomba(id) { 
-            enviar(`casa/bomba${id}/comando`, document.getElementById(`switch-b${id}`).checked ? "ON" : "OFF"); 
+            const isTurningOn = document.getElementById(`switch-b${id}`).checked;
+            
+            if (isTurningOn) {
+                // 1. Obtener valor actual del slider (0 si está en off)
+                const sliderVal = document.getElementById(`slider-b${id}`).value;
+                const valInt = parseInt(sliderVal);
+                
+                // 2. Enviar primero la configuración del timer
+                enviar(`casa/bomba${id}/set_timer`, valInt.toString());
+                
+                // 3. Esperar 50ms para que el ESP32 guarde el dato
+                setTimeout(() => {
+                    enviar(`casa/bomba${id}/comando`, "ON");
+                }, 50);
+                
+            } else {
+                // Apagar directo
+                enviar(`casa/bomba${id}/comando`, "OFF");
+            }
         }
         
         function programarReloj(id) { const tIdx = (id===1)?currentSubTabB1:currentSubTabB2; enviar(`casa/bomba${id}/turno${tIdx}`, `${document.getElementById(`start-b${id}`).value}-${document.getElementById(`end-b${id}`).value}`); }
         function borrarTurno(id) { enviar(`casa/bomba${id}/turno${(id===1)?currentSubTabB1:currentSubTabB2}`, "OFF"); }
         
-        // --- CORRECCIÓN 5: Actualización correcta de variables locales ---
+        // --- EL SLIDER YA NO ENVÍA NADA, SOLO ACTUALIZA TEXTO LOCAL ---
         function setTimer(id, v) { 
-            const val = parseInt(v);
-            if(id === 1) timerDurationB1 = val;
-            if(id === 2) timerDurationB2 = val;
-            enviar(`casa/bomba${id}/set_timer`, val.toString()); 
+            // Esta función queda vacía porque el envío se hace en toggleBomba
+            // Mantenemos la función para no romper referencias si las hubiera
         }
         
         function updateSlider(id, v) { 
+            // Solo actualiza la pantalla
             document.getElementById(`val-timer-b${id}`).innerText = v > 0 ? v + "m" : "Off"; 
             if(id === 1) timerDurationB1 = parseInt(v); 
             if(id === 2) timerDurationB2 = parseInt(v); 
